@@ -31,7 +31,7 @@ class CognitoComicsFinder: NSObject {
     }
     
     func createNewOrUpdateIdentityInPool() {
-        
+        // authorize in cognito with credentials
         let credentialsProvider = AWSCognitoCredentialsProvider.credentialsWithRegionType(
             AWSRegionType.USEast1,
             accountId: CognitoAccountID,
@@ -44,25 +44,26 @@ class CognitoComicsFinder: NSObject {
             credentialsProvider: credentialsProvider)
         
         AWSServiceManager.defaultServiceManager().setDefaultServiceConfiguration(defaultServiceConfiguration)
-        
+        // register device in cognito pool and get it's id
         credentialsProvider.getIdentityId()
+        NSLog("uniq for device identity id \(credentialsProvider.identityId)")
     }
 
     func addFavouriteComic(comicTitle: String, comicID: String) {
-        
+        // sync and open dataset for current identity(device)
         let syncClient = AWSCognito.defaultCognito()
         let dataset = syncClient.openOrCreateDataset(FavouritesComisDataSetName)
-        
+        // add new key-value
         dataset.setString(comicTitle, forKey: comicID)
-        
+        // syncronize dataset asyncronously with cognito
         dataset.synchronize()
     }
     
     func getFavouritesDictionary(completionHandler handler: (response:NSDictionary!) -> Void) {
-        
+        // sync and open dataset for current identity(device)
         let syncClient = AWSCognito.defaultCognito()
         var dataset = syncClient.openOrCreateDataset(FavouritesComisDataSetName)
-       
+       // asyncronously fetch key value pairs
         dataset.synchronize().continueWithBlock { (task: BFTask!) -> AnyObject! in
             let datasetDictionary:NSDictionary = dataset.getAll()
             handler(response: datasetDictionary)
