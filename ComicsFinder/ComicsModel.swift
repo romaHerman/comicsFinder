@@ -23,10 +23,12 @@ class ComicsModel: NSObject {
     var delegate:ComicsControllerDelegate?
     
     func updateComicsData() {
-        comicsIDArray = getFavouriteComicIds()
-        comicsIDArray.reverse()
-        loadNextPage()
-        loadFavouritesComics(comicsIDArray)
+        getFavouriteComicIds { (response) -> Void in
+            self.comicsIDArray = response
+            self.comicsIDArray.reverse()
+            self.loadNextPage()
+            self.loadFavouritesComics(self.comicsIDArray)
+        }
     }
     
     func loadNextPage() {
@@ -54,13 +56,11 @@ class ComicsModel: NSObject {
             })
         } else {
             self.delegate?.comicsDataDidUpdated(self.comicsArray, favouritesArray: self.staredComicsArray)
-            //self.favouritesLoaded(favouritesArray)
         }
     }
     
     func favouritesLoaded(starred: Array<Comic>) {
         self.staredComicsArray = starred
-//        loadNextPage()
         self.delegate?.comicsDataDidUpdated(self.comicsArray, favouritesArray: self.staredComicsArray)
     }
     
@@ -97,11 +97,11 @@ class ComicsModel: NSObject {
         CognitoComicsFinder.sharedInstance.addFavouriteComic(staredComic.title!, comicID: String(staredComic.comicID!))
     }
     
-    func getFavouriteComicIds() -> Array<AnyObject> {
-        let keyValueFavPairs = CognitoComicsFinder.sharedInstance.getFavouritesDictionary()
-        let comicIDsArray = keyValueFavPairs.allKeys
-        
-        return comicIDsArray
+    func getFavouriteComicIds(completion handler: (response:Array<AnyObject>!) -> Void) {
+        CognitoComicsFinder.sharedInstance.getFavouritesDictionary { (response) -> Void in
+            let comicIDs = response.allKeys
+            handler(response: comicIDs)
+        }
     }
     
     func updatingFavourites() -> Bool {

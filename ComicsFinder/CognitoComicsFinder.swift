@@ -58,15 +58,16 @@ class CognitoComicsFinder: NSObject {
         dataset.synchronize()
     }
     
-    func getFavouritesDictionary() -> NSDictionary {
+    func getFavouritesDictionary(completionHandler handler: (response:NSDictionary!) -> Void) {
         
         let syncClient = AWSCognito.defaultCognito()
-        let dataset = syncClient.openOrCreateDataset(FavouritesComisDataSetName)
-        
-        dataset.synchronize()
-        let datasetDictionary:NSDictionary = dataset.getAll()
-        
-        return datasetDictionary
+        var dataset = syncClient.openOrCreateDataset(FavouritesComisDataSetName)
+       
+        dataset.synchronize().continueWithBlock { (task: BFTask!) -> AnyObject! in
+            let datasetDictionary:NSDictionary = dataset.getAll()
+            handler(response: datasetDictionary)
+            return nil
+        }
     }
 
 }

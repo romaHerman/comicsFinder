@@ -423,41 +423,25 @@
                                                 <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DJ5-vq-csc">
                                                     <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
                                                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                    <constraints>
-                                                        <constraint firstAttribute="width" constant="400" id="9Nz-qO-dO1"/>
-                                                        <constraint firstAttribute="height" constant="165" id="AAM-J3-W2T"/>
-                                                    </constraints>
                                                     <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="14"/>
                                                     <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                                                    <variation key="default">
-                                                        <mask key="constraints">
-                                                            <exclude reference="9Nz-qO-dO1"/>
-                                                            <exclude reference="AAM-J3-W2T"/>
-                                                        </mask>
-                                                    </variation>
-                                                    <variation key="widthClass=compact">
-                                                        <mask key="constraints">
-                                                            <include reference="9Nz-qO-dO1"/>
-                                                            <include reference="AAM-J3-W2T"/>
-                                                        </mask>
-                                                    </variation>
                                                 </textView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailingMargin" secondItem="DJ5-vq-csc" secondAttribute="trailing" constant="-8" id="TOB-8Q-8Ly"/>
-                                                <constraint firstItem="DJ5-vq-csc" firstAttribute="leading" secondItem="cIJ-74-NNE" secondAttribute="leadingMargin" constant="-8" id="UPk-9u-GSf"/>
-                                                <constraint firstItem="DJ5-vq-csc" firstAttribute="top" secondItem="cIJ-74-NNE" secondAttribute="topMargin" constant="-8" id="byw-y4-cdK"/>
-                                                <constraint firstAttribute="bottomMargin" secondItem="DJ5-vq-csc" secondAttribute="bottom" constant="-8.5" id="nr2-bL-uXR"/>
+                                                <constraint firstItem="DJ5-vq-csc" firstAttribute="leading" secondItem="cIJ-74-NNE" secondAttribute="leading" id="1zp-0u-gIt"/>
+                                                <constraint firstItem="DJ5-vq-csc" firstAttribute="top" secondItem="cIJ-74-NNE" secondAttribute="top" id="9Al-eA-WYL"/>
+                                                <constraint firstAttribute="bottom" secondItem="DJ5-vq-csc" secondAttribute="bottom" id="ajN-5t-mV5"/>
+                                                <constraint firstAttribute="trailing" secondItem="DJ5-vq-csc" secondAttribute="trailing" id="kuy-qu-IbF"/>
                                             </constraints>
                                             <variation key="default">
                                                 <mask key="subviews">
                                                     <exclude reference="DJ5-vq-csc"/>
                                                 </mask>
                                                 <mask key="constraints">
-                                                    <exclude reference="TOB-8Q-8Ly"/>
-                                                    <exclude reference="UPk-9u-GSf"/>
-                                                    <exclude reference="byw-y4-cdK"/>
-                                                    <exclude reference="nr2-bL-uXR"/>
+                                                    <exclude reference="1zp-0u-gIt"/>
+                                                    <exclude reference="9Al-eA-WYL"/>
+                                                    <exclude reference="ajN-5t-mV5"/>
+                                                    <exclude reference="kuy-qu-IbF"/>
                                                 </mask>
                                             </variation>
                                             <variation key="widthClass=compact">
@@ -465,10 +449,10 @@
                                                     <include reference="DJ5-vq-csc"/>
                                                 </mask>
                                                 <mask key="constraints">
-                                                    <include reference="TOB-8Q-8Ly"/>
-                                                    <include reference="UPk-9u-GSf"/>
-                                                    <include reference="byw-y4-cdK"/>
-                                                    <include reference="nr2-bL-uXR"/>
+                                                    <include reference="1zp-0u-gIt"/>
+                                                    <include reference="9Al-eA-WYL"/>
+                                                    <include reference="ajN-5t-mV5"/>
+                                                    <include reference="kuy-qu-IbF"/>
                                                 </mask>
                                             </variation>
                                         </tableViewCellContentView>
