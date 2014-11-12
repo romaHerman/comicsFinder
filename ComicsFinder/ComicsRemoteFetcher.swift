@@ -14,68 +14,65 @@ let ComicsPerPage = 20
 let BaseUrl = "http://gateway.marvel.com/v1/public/comics"
 
 class ComicsRemoteFetcher: NSObject {
-    let queue = NSOperationQueue()
-//MARK: RequestOperations
-    func getComcis(page: Int, completionHandler handler: (response:AnyObject!) -> Void) {
-        
-        let offset = ComicsPerPage * page
-        
-        let timeStampString = getTimeStamp()
-        let hash = getHash(timeStampString)
-        let urlString = "\(BaseUrl)?format=comic&formatType=comic&limit=\(ComicsPerPage)&offset=\(offset)&apikey=\(MarvelPublicKey)&ts=\(timeStampString)&hash=\(hash)"
-
-        let urlReq = NSURLRequest(URL: NSURL(string: urlString)!)
-       
-        NSURLConnection.sendAsynchronousRequest(urlReq, queue: queue, completionHandler:{ (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
-            if !(error != nil)  {
-                let jsonResult: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
-                let jsonDict = jsonResult as? NSDictionary
-                let rawData: AnyObject? = jsonDict?.objectForKey("data")
-                let rawComicsData:Array<Dictionary<String,AnyObject>> = rawData?.objectForKey("results") as Array<Dictionary<String, AnyObject>>
-                var comicsArray: [Comic] = [ ]
-                for rawComic in rawComicsData {
-                    let comic = Comic(rawDicitonary: rawComic)
-                    comicsArray.append(comic)
-                }
-                
-                handler(response: comicsArray)
-            } else {
-                println("error = \(error)")
-            }
-        })
-    }
+  let queue = NSOperationQueue()
+  //MARK: RequestOperations
+  func getComcis(page: Int, completionHandler handler: (response:AnyObject!) -> Void) {
     
-    func getComicByID(comicID: String, complitionHamdler handler: (comic: Comic!) -> Void) {
-        let timeStampString = getTimeStamp()
-        let hash = getHash(timeStampString)
-        let urlString = "\(BaseUrl)/\(comicID)?apikey=\(MarvelPublicKey)&ts=\(timeStampString)&hash=\(hash)"
-        
-        let urlReq = NSURLRequest(URL: NSURL(string: urlString)!)
-        
-        NSURLConnection.sendAsynchronousRequest(urlReq, queue: queue, completionHandler:{ (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
-            if !(error != nil)  {
-                let jsonResult: AnyObject? = NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers, error: nil)
-                let jsonDict = jsonResult as? NSDictionary
-                let rawData: AnyObject? = jsonDict?.objectForKey("data")
-                let rawComicsData:Array<Dictionary<String,AnyObject>> = rawData?.objectForKey("results") as Array<Dictionary<String, AnyObject>>
-                
-                let rawComic = rawComicsData.first
-                let comic = Comic(rawDicitonary: rawComic!)
-                handler(comic: comic)
-            } else {
-                println("error = \(error)")
-            }
-        })
-    }
+    let offset = ComicsPerPage * page
     
-//MARK: Helper functions
-    func getTimeStamp() -> String {
-        return "\(Int(NSDate().timeIntervalSince1970))"
-    }
+    let timeStampString = getTimeStamp()
+    let hash = getHash(timeStampString)
+    let urlString = "\(BaseUrl)?format=comic&formatType=comic&limit=\(ComicsPerPage)&offset=\(offset)&apikey=\(MarvelPublicKey)&ts=\(timeStampString)&hash=\(hash)"
     
-    func getHash(timestampString:String) -> String {
-        //hash origin formula = md5(ts+privateKey+publicKey)
-        let formula = timestampString + MarvelPrivateKey + MarvelPublicKey
-        return "\(formula.md5)"
-    }
+    let urlReq = NSURLRequest(URL: NSURL(string: urlString)!, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad,
+      timeoutInterval: 30)
+    
+    NSURLConnection.sendAsynchronousRequest(urlReq, queue: queue, completionHandler:{ (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
+      if !(error != nil)  {
+        let json = JSON(data: data)
+        
+        if let comData = json["data"]["results"].arrayValue {
+          var comicsArray: [Comic] = [ ]
+          for rawComic in comData {
+            let comic = Comic(rawDicitonary: rawComic)
+            comicsArray.append(comic)
+          }
+          handler(response: comicsArray)
+        }
+      } else {
+        println("error = \(error)")
+      }
+    })
+  }
+  
+  func getComicByID(comicID: String, complitionHamdler handler: (comic: Comic!) -> Void) {
+    let timeStampString = getTimeStamp()
+    let hash = getHash(timeStampString)
+    let urlString = "\(BaseUrl)/\(comicID)?apikey=\(MarvelPublicKey)&ts=\(timeStampString)&hash=\(hash)"
+    
+    let urlReq = NSURLRequest(URL: NSURL(string: urlString)!, cachePolicy: NSURLRequestCachePolicy.ReturnCacheDataElseLoad,
+      timeoutInterval: 30)
+    
+    NSURLConnection.sendAsynchronousRequest(urlReq, queue: queue, completionHandler:{ (response: NSURLResponse!, data: NSData!, error: NSError!) -> Void in
+      if !(error != nil)  {
+        let json = JSON(data: data)
+        let comData = json["data"]["results"][0]
+        let comic = Comic(rawDicitonary: comData)
+        handler(comic: comic)
+      } else {
+        println("error = \(error)")
+      }
+    })
+  }
+  
+  //MARK: Helper functions
+  func getTimeStamp() -> String {
+    return "\(Int(NSDate().timeIntervalSince1970))"
+  }
+  
+  func getHash(timestampString:String) -> String {
+    //hash origin formula = md5(ts+privateKey+publicKey)
+    let formula = timestampString + MarvelPrivateKey + MarvelPublicKey
+    return "\(formula.md5)"
+  }
 }

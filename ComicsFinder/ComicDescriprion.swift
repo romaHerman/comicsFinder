@@ -9,20 +9,22 @@
 import UIKit
 
 class ComicDescriprion: UITableViewController {
+  
+  @IBOutlet var coverImageView:UIImageView?
+  @IBOutlet var comicDescriprion: UITextView?
+  
+  var comic: Comic?
+  
+  override func viewDidLoad() {
     
-    @IBOutlet var coverImageView:UIImageView?
-    @IBOutlet var comicDescriprion: UITextView?
-    
-    var comic: Comic?
-    
-    override func viewDidLoad() {
-
-        self.title = comic?.title!
-        comicDescriprion?.text = comic?.description!
-        
-        let comicCoverStringURL = comic?.getCoverUrlForSize(CoverSize.CoverSizeLandscape)
-        coverImageView?.asyncSetImageFromURL(NSURL(string: comicCoverStringURL!)!)
-        
+    self.title = comic?.title!
+    if let description = comic?.description {
+      comicDescriprion?.text = description
     }
-
+    
+    let comicCoverStringURL = comic?.getCoverUrlForSize(CoverSize.CoverSizeLandscape)
+    coverImageView?.asyncSetImageFromURL(NSURL(string: comicCoverStringURL!)!)
+    
+  }
+  
 }
